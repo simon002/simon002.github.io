@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="cocos2d-x," />
 
 
 
@@ -84,20 +84,17 @@
 
 
 
-<meta name="description" content="title: cocos2d-x 接入sharesdk遇到的问题date: 2016-07-10 23:05:02tags: 第三方sdk
-最近在接入sharesdk，参考官方文档 写的很详细。接入完成在真机上测试时点击微信分享后却不弹出微信客户端，出现“分享操作正在后台进行…”提示后就一直停留在应用界面上。而且不报任何错误。">
+<meta name="description" content="最近在接入sharesdk，参考官方文档 写的很详细。接入完成在真机上测试时点击微信分享后却不弹出微信客户端，出现“分享操作正在后台进行…”提示后就一直停留在应用界面上。而且不报任何错误。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SIMONSILENT">
+<meta property="og:title" content="cocos2d-x 接入sharesdk遇到的问题">
 <meta property="og:url" content="http://simonsilent.coding.me/2016/07/10/cocos2d-x 接入sharesdk遇到的问题/index.html">
 <meta property="og:site_name" content="SIMONSILENT">
-<meta property="og:description" content="title: cocos2d-x 接入sharesdk遇到的问题date: 2016-07-10 23:05:02tags: 第三方sdk
-最近在接入sharesdk，参考官方文档 写的很详细。接入完成在真机上测试时点击微信分享后却不弹出微信客户端，出现“分享操作正在后台进行…”提示后就一直停留在应用界面上。而且不报任何错误。">
+<meta property="og:description" content="最近在接入sharesdk，参考官方文档 写的很详细。接入完成在真机上测试时点击微信分享后却不弹出微信客户端，出现“分享操作正在后台进行…”提示后就一直停留在应用界面上。而且不报任何错误。">
 <meta property="og:image" content="http://7xw1z6.com1.z0.glb.clouddn.com/QQ%E5%9B%BE%E7%89%8720160710232406.png">
-<meta property="og:updated_time" content="2016-07-10T15:33:26.419Z">
+<meta property="og:updated_time" content="2016-07-10T15:37:41.937Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SIMONSILENT">
-<meta name="twitter:description" content="title: cocos2d-x 接入sharesdk遇到的问题date: 2016-07-10 23:05:02tags: 第三方sdk
-最近在接入sharesdk，参考官方文档 写的很详细。接入完成在真机上测试时点击微信分享后却不弹出微信客户端，出现“分享操作正在后台进行…”提示后就一直停留在应用界面上。而且不报任何错误。">
+<meta name="twitter:title" content="cocos2d-x 接入sharesdk遇到的问题">
+<meta name="twitter:description" content="最近在接入sharesdk，参考官方文档 写的很详细。接入完成在真机上测试时点击微信分享后却不弹出微信客户端，出现“分享操作正在后台进行…”提示后就一直停留在应用界面上。而且不报任何错误。">
 <meta name="twitter:image" content="http://7xw1z6.com1.z0.glb.clouddn.com/QQ%E5%9B%BE%E7%89%8720160710232406.png">
 
 
@@ -121,7 +118,7 @@
 
   <link rel="canonical" href="http://simonsilent.coding.me/2016/07/10/cocos2d-x 接入sharesdk遇到的问题/"/>
 
-  <title>  | SIMONSILENT </title>
+  <title> cocos2d-x 接入sharesdk遇到的问题 | SIMONSILENT </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -251,7 +248,7 @@
             
             
               
-                
+                cocos2d-x 接入sharesdk遇到的问题
               
             
           </h1>
@@ -263,7 +260,7 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-10T23:33:20+08:00" content="2016-07-10">
+            <time itemprop="dateCreated" datetime="2016-07-10T23:36:02+08:00" content="2016-07-10">
               2016-07-10
             </time>
           </span>
@@ -298,8 +295,7 @@
       
 
       
-        <p>title: cocos2d-x 接入sharesdk遇到的问题<br>date: 2016-07-10 23:05:02<br>tags: 第三方sdk</p>
-<p>最近在接入sharesdk，<a href="http://wiki.mob.com/cocos2d-x%E5%BF%AB%E9%80%9F%E9%9B%86%E6%88%90%E6%8C%87%E5%8D%97/" target="_blank" rel="external">参考官方文档</a> 写的很详细。接入完成在真机上测试时点击微信分享后却不弹出微信客户端，出现<strong>“分享操作正在后台进行…”</strong>提示后就一直停留在应用界面上。而且不报任何错误。<a id="more"></a>仔细对照文档检查各个步骤发现了一个提示:<br><img src="http://7xw1z6.com1.z0.glb.clouddn.com/QQ%E5%9B%BE%E7%89%8720160710232406.png" alt="cmd-markdown-logo"><br>上图中的(<strong>注意文件编码如果不为uft-8会导致所有的内容都为Null</strong>)，由于我是用vs2013开发的，新建的cpp文件默认为GB2312格式的，于是将cpp改为utf-8格式，再次分享就没问题了。</p>
+        <p>最近在接入sharesdk，<a href="http://wiki.mob.com/cocos2d-x%E5%BF%AB%E9%80%9F%E9%9B%86%E6%88%90%E6%8C%87%E5%8D%97/" target="_blank" rel="external">参考官方文档</a> 写的很详细。接入完成在真机上测试时点击微信分享后却不弹出微信客户端，出现<strong>“分享操作正在后台进行…”</strong>提示后就一直停留在应用界面上。而且不报任何错误。<a id="more"></a>仔细对照文档检查各个步骤发现了一个提示:<br><img src="http://7xw1z6.com1.z0.glb.clouddn.com/QQ%E5%9B%BE%E7%89%8720160710232406.png" alt="cmd-markdown-logo"><br>上图中的(<strong>注意文件编码如果不为uft-8会导致所有的内容都为Null</strong>)，由于我是用vs2013开发的，新建的cpp文件默认为GB2312格式的，于是将cpp改为utf-8格式，再次分享就没问题了。</p>
 
       
     </div>
@@ -318,6 +314,12 @@
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/cocos2d-x/" rel="tag">#cocos2d-x</a>
+          
+        </div>
       
 
       
@@ -357,7 +359,7 @@
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2016/07/10/cocos2d-x 接入sharesdk遇到的问题/"
-           data-title="" data-url="http://simonsilent.coding.me/2016/07/10/cocos2d-x 接入sharesdk遇到的问题/">
+           data-title="cocos2d-x 接入sharesdk遇到的问题" data-url="http://simonsilent.coding.me/2016/07/10/cocos2d-x 接入sharesdk遇到的问题/">
       </div>
     
   </div>
@@ -412,7 +414,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
