@@ -152,7 +152,7 @@
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
-  <p class="site-subtitle">我思故我在</p>
+  <p class="site-subtitle">SIMONSILENT的博客</p>
 </div>
 
 <div class="site-nav-toggle">
@@ -226,6 +226,122 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/16/cocos2d-x实现漩涡效果的shader/" itemprop="url">
+                  cocos2d-x shader实现漩涡效果
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-16T23:36:02+08:00" content="2016-07-16">
+              2016-07-16
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/16/cocos2d-x实现漩涡效果的shader/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/16/cocos2d-x实现漩涡效果的shader/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/16/cocos2d-x实现漩涡效果的shader/" class="leancloud_visitors" data-flag-title="cocos2d-x shader实现漩涡效果">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>###前言<br>最开始是想实现一个黑洞扭曲空间效果的shader，后来发现可以简化成漩涡效果，于是在网上搜索各种资料。主要参考这篇文章 <a href="http://www.cocoachina.com/cocos/20140814/9380.html" target="_blank" rel="external">猛击我</a>。但是这篇文章是基于顶点shader实现的，对于2d中的sprite只有4个顶点，所以在扭曲顶点uv坐标时并不能达到想要的效果，而对于3d则是mesh网格中的顶点数目越多实际效果越好，那如何能让2d中的sprite也能实现漩涡扭曲效果呢。</p>
+<p>###原理<br>可以引用unity文档中对于扭曲图像效果的说明：<strong>旋转扭曲图像特效是指在一个圆形区域内扭曲所渲染的图像。在圆形区域中心的像素被旋转一定的角度，而其他像素的旋转程度随着距中心距离的增大而减小，在圆形区域边界减小到0。</strong>所以有2种方式实现这一过程：<br>1.可以旋转顶点坐标本身。<br>2.可以旋转顶点对应的纹理坐标。<br>由于我们在顶点shader中没法拿到每个像素点的坐标值，所以我们用第二种方式实现。</p>
+<p>###实现<br>首先是顶点shader(<em>Vortex.vsh</em>)<br><figure class="highlight glsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta">#ifdef GL_ES</span></div><div class="line"><span class="keyword">precision</span> <span class="keyword">mediump</span> <span class="type">float</span>;</div><div class="line"><span class="meta">#endif</span></div><div class="line"></div><div class="line"><span class="comment">// Inputs</span></div><div class="line">attribute <span class="type">vec4</span> a_position;</div><div class="line">attribute <span class="type">vec2</span> a_texCoord;</div><div class="line"></div><div class="line"><span class="comment">// Varyings</span></div><div class="line"><span class="comment">//varying vec2 v_texCoord;</span></div><div class="line"><span class="meta">#ifdef GL_ES</span></div><div class="line"><span class="keyword">varying</span> <span class="keyword">mediump</span> <span class="type">vec2</span> v_texCoord;</div><div class="line"><span class="meta">#else</span></div><div class="line"><span class="keyword">varying</span> <span class="type">vec2</span> v_texCoord;</div><div class="line"><span class="meta">#endif</span></div><div class="line"><span class="type">void</span> main()</div><div class="line">&#123;</div><div class="line">    <span class="built_in">gl_Position</span> = CC_MVPMatrix * a_position;</div><div class="line">    <span class="comment">//拿到未做扭曲变换的v_texCoord纹理坐标扔给像素shader</span></div><div class="line">    v_texCoord = a_texCoord;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>再看核心实现，像素shader(<em>Vortex.fsh</em>)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">#ifdef OPENGL_ES</div><div class="line">precision mediump float;</div><div class="line">#endif</div><div class="line">uniform sampler2D CC_Texture0;</div><div class="line">//uniform sampler2D u_texture;</div><div class="line">// Varyings</div><div class="line">//varying vec2 v_texCoord;//顶点shader扔过来的纹理坐标</div><div class="line">#ifdef GL_ES</div><div class="line">varying mediump vec2 v_texCoord;</div><div class="line">#else</div><div class="line">varying vec2 v_texCoord;</div><div class="line">#endif</div><div class="line">uniform	float radius ;//旋转的半径</div><div class="line">uniform	float angle ;//旋转的角度</div><div class="line"></div><div class="line">//旋涡的计算函数</div><div class="line">vec2 vortex( vec2 uv )</div><div class="line">&#123;</div><div class="line">    //先减去贴图中心点的纹理坐标,这样是方便旋转计算</div><div class="line">	uv -= vec2(0.5, 0.5);</div><div class="line">	//计算当前坐标与中心点的距离。</div><div class="line">	float dist = length(uv);</div><div class="line">	//计算出旋转的百分比</div><div class="line">	float percent = (radius - dist) / radius;</div><div class="line">	if ( percent &lt;= 1.0 &amp;&amp; percent &gt;= 0.0) //小于半径的区域才进行旋转</div><div class="line">	&#123;</div><div class="line">	    //通过sin,cos来计算出旋转后的位置。(这里我还不明白具体的原理，为什么通过这个计算可以得到旋转后的uv坐标，知道原理的同学可以联系我：-）)</div><div class="line">		float theta = percent * percent * angle * 0.5;</div><div class="line">		float s = sin(theta);</div><div class="line">		float c = cos(theta);</div><div class="line">		uv = vec2(dot(uv, vec2(c, -s)), dot(uv, vec2(s, c)));</div><div class="line">	&#125;</div><div class="line">	//再加上贴图中心点的纹理坐标，这样才正确。</div><div class="line">	uv += vec2(0.5, 0.5);</div><div class="line">	return uv;</div><div class="line">&#125;</div><div class="line">void main()</div><div class="line">&#123;</div><div class="line">    //采样像素点时，通过变换后的uv值取。</div><div class="line">	gl_FragColor = texture2D( CC_Texture0, vortex( v_texCoord ) );</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在看看c++代码中的核心实现:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">CCGLProgram * p = new CCGLProgram();</div><div class="line">p-&gt;initWithVertexShaderFilename(&quot;Vortex.vsh&quot;, &quot;Vortex.fsh&quot;);</div><div class="line">p-&gt;addAttribute(kCCAttributeNamePosition, kCCVertexAttrib_Position);</div><div class="line">p-&gt;addAttribute(kCCAttributeNameColor, kCCVertexAttrib_Color);</div><div class="line">p-&gt;addAttribute(kCCAttributeNameTexCoord, kCCVertexAttrib_TexCoords);</div><div class="line">p-&gt;link();</div><div class="line">p-&gt;updateUniforms();</div><div class="line">//m_pSprite为想要使用该shader的sprite</div><div class="line">m_pSprite-&gt;setShaderProgram(p);</div><div class="line">GLuint angle = glGetUniformLocation(m_pSprite-&gt;getShaderProgram()-&gt;getProgram(), &quot;angle&quot;);</div><div class="line">GLuint radius = glGetUniformLocation(m_pSprite-&gt;getShaderProgram()-&gt;getProgram(), &quot;radius&quot;);</div><div class="line"></div><div class="line">m_pSprite-&gt;getShaderProgram()-&gt;setUniformLocationWith1f(radius, 1.0f);//初始化时设置想要旋转的半径区域大小</div><div class="line">m_pSprite-&gt;getShaderProgram()-&gt;setUniformLocationWith1f(angle, 0.0f);//初始化时设置开始的旋转角度</div></pre></td></tr></table></figure></p>
+<p>然后起个定时器，在定时器里面实现随时间旋转角度不断增大的效果:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">GLuint angle = glGetUniformLocation(m_pSprite-&gt;getShaderProgram()-&gt;getProgram(), &quot;angle&quot;);</div><div class="line">m_pSprite-&gt;getShaderProgram()-&gt;use();</div><div class="line">m_pSprite-&gt;getShaderProgram()-&gt;setUniformLocationWith1f(angle, m_angle);//这里的m_angle值随时间不断增大</div></pre></td></tr></table></figure></p>
+<p>###最后效果如下<br><img src="http://7xw1z6.com1.z0.glb.clouddn.com/eeee.gif" alt="cmd-markdown-logo"></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
     
       
 
@@ -492,7 +608,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">3</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -502,7 +618,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
