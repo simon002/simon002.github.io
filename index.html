@@ -248,6 +248,119 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/20/python编写脚本工具/" itemprop="url">
+                  python编写脚本工具
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-20T23:05:02+08:00" content="2016-07-20">
+              2016-07-20
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/20/python编写脚本工具/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/20/python编写脚本工具/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/20/python编写脚本工具/" class="leancloud_visitors" data-flag-title="python编写脚本工具">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近在研究cocos2d-x中的热更新机制，有一个需求是遍历一个文件夹下的所有文件，并计算文件的md5值和大小，最后将文件的目录，md5值和size保存到一个lua文件中。也就是生成如下格式的一个lua文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">local flist = &#123;</div><div class="line">	appVersion = 1,</div><div class="line">	version = &quot;1.0.1&quot;,</div><div class="line">	dirPaths = &#123;</div><div class="line">		&#123;name = &quot;common&quot;&#125;,</div><div class="line">		&#123;name = &quot;common\sound&quot;&#125;,</div><div class="line">		&#123;name = &quot;lib&quot;&#125;,</div><div class="line"></div><div class="line"> 	&#125;,</div><div class="line"> 	fileInfoList=&#123;</div><div class="line">		&#123;name = &quot;a.txt&quot;,md5 = &quot;d41d8cd98f00b204e9800998ecf8427e&quot;,size = 0&#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>正好之前学了下python，可以拿这个来练练手。直接上代码吧，其实也挺简单的没啥好说的</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">#coding:utf-8</div><div class="line">import os</div><div class="line">import os.path</div><div class="line">import hashlib</div><div class="line">import sys</div><div class="line"></div><div class="line">#计算文件的md5值</div><div class="line">def calfilemd5(file): </div><div class="line"> 	md5 = hashlib.md5()</div><div class="line"> 	fs = open(file, &apos;rb&apos;)</div><div class="line"> 	while True:#--小文件就没必要这样分段计算了</div><div class="line"> 		buf = fs.read(1024)</div><div class="line"> 		if buf:</div><div class="line"> 			md5.update(buf)</div><div class="line"> 		else:</div><div class="line"> 			break</div><div class="line"> 	return md5.hexdigest()				</div><div class="line"></div><div class="line">#计算文件的size</div><div class="line">def calfilesize(file):</div><div class="line">	return os.path.getsize(file)</div><div class="line"></div><div class="line">#遍历文件夹并生成flist文件</div><div class="line">def genflist(root_dir):</div><div class="line">	flist = &quot;local flist = &#123;\n&quot; +\</div><div class="line">	&quot;	appVersion = 1,\n&quot; +\</div><div class="line">	&quot;	version = \&quot;1.0.1\&quot;,\n&quot; +\</div><div class="line">	&quot;	dirPaths = &#123;\n&quot;</div><div class="line">	</div><div class="line">	#提取所有目录的路径</div><div class="line">	for dirpath , dirnames, filenames in os.walk(root_dir):</div><div class="line">		if root_dir != dirpath:</div><div class="line">			flist = flist + &quot;		&#123;name = \&quot;&quot; + dirpath.replace((root_dir + &apos;\\&apos;),&apos;&apos;) + &quot;\&quot;&#125;,\n&quot;</div><div class="line">	flist = flist + &quot;\n 	&#125;,\n 	fileInfoList=&#123;\n&quot;</div><div class="line">	#计算所有文件的size和md5</div><div class="line">	for dirpath , dirnames, filenames in os.walk(root_dir):</div><div class="line">		f_dir = dirpath.replace((root_dir + &apos;\\&apos;),&apos;&apos;)</div><div class="line">		for f in filenames:</div><div class="line">			f_md5 = calfilemd5(os.path.join(dirpath,f))</div><div class="line">			f_size = calfilesize(os.path.join(dirpath,f))</div><div class="line">			last_dir = &apos;&apos;</div><div class="line">			if root_dir != f_dir:</div><div class="line">				last_dir = f_dir + &apos;\\&apos; + f</div><div class="line">			else:</div><div class="line">				last_dir = f</div><div class="line">			flist = flist + &quot;		&#123;name = \&quot;&quot; + last_dir + &quot;\&quot;,md5 = \&quot;&quot; + str(f_md5) + &quot;\&quot;,size = &quot; + str(f_size) + &quot;&#125;,\n&quot;</div><div class="line">	flist = flist + &quot;	&#125;,\n&#125;&quot;</div><div class="line">	filehandle = open(&apos;flist.lua&apos;,&apos;w&apos;)</div><div class="line">	filehandle.write(flist)</div><div class="line">	filehandle.close()	</div><div class="line">if __name__ == &apos;__main__&apos; :</div><div class="line">	root_dir = sys.argv[1]</div><div class="line">	genflist(root_dir)</div></pre></td></tr></table></figure>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>最后不得不说python的语法真严格，缩进不对就直接语法错误了，估计没有第二种语言是这样设计的了。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/16/cocos2d-x实现漩涡效果的shader/" itemprop="url">
                   cocos2d-x shader实现漩涡效果
                 </a>
@@ -604,7 +717,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -614,7 +727,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
